@@ -1,26 +1,48 @@
-name: Daily OpportunityForge
+name: Daily OpportunityForge v4.1 - Self-Healing Factory
+
 on:
   schedule:
-    - cron: '0 9 * * *'
+    - cron: '0 9 * * *'   # 9 AM UTC = 1 AM Vancouver
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'normal / test / meta'
+        required: false
+        default: 'normal'
+      niche:
+        description: 'Product niche'
+        required: false
+        default: 'AI_coding_agents'
+      num:
+        description: 'Number of products'
+        required: false
+        default: '3'
 
 jobs:
-  churn:
+  forge:
     runs-on: ubuntu-latest
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - run: pip install groq
-      - name: Run Forge
+      - name: Run OpportunityForge v4.1
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        run: python opportunity_forge.py --num 3
-      - name: Commit new products
         run: |
-          git config user.name "ForgeBot"
+          if [ "${{ github.event.inputs.mode }}" = "test" ]; then
+            python opportunity_forge.py --test
+          elif [ "${{ github.event.inputs.mode }}" = "meta" ]; then
+            python opportunity_forge.py --meta
+          else
+            python opportunity_forge.py --niche "${{ github.event.inputs.niche }}" --num ${{ github.event.inputs.num }}
+          fi
+      - name: Commit & Push Products
+        run: |
+          git config user.name "ForgeBot v4.1"
           git config user.email "forge@atomadic.com"
-          git add products/ output/
-          git commit -m "Daily Forge $(date)" || echo "No changes"
+          git add products/ output/ archive.jsonl forge.log 2>/dev/null || true
+          git commit -m "Daily Forge v4.1 $(date) [auto-recovery active]" || echo "No changes"
           git push
