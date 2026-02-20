@@ -1,0 +1,26 @@
+name: Daily OpportunityForge
+on:
+  schedule:
+    - cron: '0 9 * * *'   # 9 AM UTC = 1 AM Vancouver — adjust if you want
+  workflow_dispatch:
+
+jobs:
+  churn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install groq
+      - name: Run Forge
+        env:
+          GROQ_KEYS: ${{ secrets.GROQ_KEYS }}
+        run: python opportunity_forge.py --num 3
+      - name: Commit new products
+        run: |
+          git config user.name "ForgeBot"
+          git config user.email "forge@atomadic.com"
+          git add products/ output/
+          git commit -m "Daily Forge $(date)" || echo "No changes"
+          git push
