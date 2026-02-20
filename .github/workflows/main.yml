@@ -1,7 +1,7 @@
-name: Daily OpportunityForge
+name: Daily OpportunityForge2
 on:
   schedule:
-    - cron: '0 9 * * *'   # 9 AM UTC = 1 AM Vancouver — adjust if you want
+    - cron: '0 1 * * *'
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       - run: pip install groq
       - name: Run Forge
         env:
-          GROQ_KEYS: ${{ secrets.GROQ_KEYS }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}   # ← single key now
         run: python opportunity_forge.py --num 3
       - name: Commit new products
         run: |
