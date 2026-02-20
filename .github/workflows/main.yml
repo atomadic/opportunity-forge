@@ -15,7 +15,7 @@ jobs:
       - run: pip install groq
       - name: Run Forge
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}   # ← single key now
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: python opportunity_forge.py --num 3
       - name: Commit new products
         run: |
