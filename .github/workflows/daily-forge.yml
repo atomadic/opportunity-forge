@@ -24,7 +24,7 @@ permissions:
 jobs:
   forge:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -43,11 +43,15 @@ jobs:
           else
             python opportunity_forge.py --niche "${{ github.event.inputs.niche }}" --num ${{ github.event.inputs.num }}
           fi
-      - name: Commit & Push Products (normal & meta only)
+      - name: Debug - List created files
+        if: ${{ github.event.inputs.mode != 'test' }}
+        run: ls -laR products output 2>/dev/null || echo "No products/output folder created yet"
+      - name: Commit & Push Products
         if: ${{ github.event.inputs.mode != 'test' }}
         run: |
           git config user.name "ForgeBot v4.1"
           git config user.email "forge@atomadic.com"
-          git add products/ output/ archive.jsonl forge.log 2>/dev/null || true
+          git add -A
+          git status
           git commit -m "Daily Forge v4.1 $(date) [self-healing active]" || echo "No changes"
           git push
