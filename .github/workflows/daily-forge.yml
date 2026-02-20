@@ -18,6 +18,10 @@ on:
         required: false
         default: '3'
 
+# ←←← THIS BLOCK FIXES THE 403 PERMISSION ERROR ←←←
+permissions:
+  contents: write
+
 jobs:
   forge:
     runs-on: ubuntu-latest
@@ -39,7 +43,8 @@ jobs:
           else
             python opportunity_forge.py --niche "${{ github.event.inputs.niche }}" --num ${{ github.event.inputs.num }}
           fi
-      - name: Commit & Push Products
+      - name: Commit & Push Products (skip in test mode)
+        if: ${{ github.event.inputs.mode != 'test' }}
         run: |
           git config user.name "ForgeBot v4.1"
           git config user.email "forge@atomadic.com"
