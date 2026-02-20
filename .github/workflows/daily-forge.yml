@@ -2,7 +2,7 @@ name: Daily OpportunityForge v4.1 - Self-Healing Factory
 
 on:
   schedule:
-    - cron: '0 9 * * *'   # 9 AM UTC = 1 AM Vancouver
+    - cron: '0 9 * * *'
   workflow_dispatch:
     inputs:
       mode:
@@ -18,7 +18,6 @@ on:
         required: false
         default: '3'
 
-# ←←← THIS BLOCK FIXES THE 403 PERMISSION ERROR ←←←
 permissions:
   contents: write
 
@@ -36,6 +35,7 @@ jobs:
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
+          echo "🚀 Starting v4.1 - mode: ${{ github.event.inputs.mode }}"
           if [ "${{ github.event.inputs.mode }}" = "test" ]; then
             python opportunity_forge.py --test
           elif [ "${{ github.event.inputs.mode }}" = "meta" ]; then
@@ -43,11 +43,11 @@ jobs:
           else
             python opportunity_forge.py --niche "${{ github.event.inputs.niche }}" --num ${{ github.event.inputs.num }}
           fi
-      - name: Commit & Push Products (skip in test mode)
+      - name: Commit & Push Products (normal & meta only)
         if: ${{ github.event.inputs.mode != 'test' }}
         run: |
           git config user.name "ForgeBot v4.1"
           git config user.email "forge@atomadic.com"
           git add products/ output/ archive.jsonl forge.log 2>/dev/null || true
-          git commit -m "Daily Forge v4.1 $(date) [auto-recovery active]" || echo "No changes"
+          git commit -m "Daily Forge v4.1 $(date) [self-healing active]" || echo "No changes"
           git push
