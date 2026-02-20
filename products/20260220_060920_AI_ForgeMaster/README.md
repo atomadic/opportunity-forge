@@ -1,0 +1,2 @@
+To use AI ForgeMaster, simply install the plugin, configure your project settings, and let the AI agent assist you in writing, debugging, and optimizing your code.
+For detailed instructions, please refer to our user manual.

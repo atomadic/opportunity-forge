@@ -1,0 +1,1 @@
+Simply integrate AI Codex Pro into your preferred IDE, and it will start suggesting code improvements and completions. For detailed instructions, refer to our user manual at https://aicodepro.com/manual
