@@ -1,7 +1,7 @@
 name: Daily OpportunityForge
 on:
   schedule:
-    - cron: '2 0 * * *'   # 9 AM UTC = 1 AM Vancouver — adjust if you want
+    - cron: '0 1 * * *'   # 9 AM UTC = 1 AM Vancouver — adjust if you want
   workflow_dispatch:
 
 jobs:
